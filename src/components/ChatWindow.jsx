@@ -5,6 +5,7 @@ import ChatInput from "./ChatInput";
 import Header from "./Header";
 import WelcomeMessage from "./WelcomeMessage";
 import useWebSocket from "../hooks/useWebSocket";
+import ErrorBanner from "./ErrorBanner";
 
 function ChatWindow() {
   const [messages, setMessages] = useState([]);
@@ -24,7 +25,7 @@ function ChatWindow() {
     ]);
   };
 
-  const { sendMessage, isConnected } = useWebSocket(handleBotMessage);
+  const { sendMessage, isConnected, error } = useWebSocket(handleBotMessage);
 
   const handleSend = (text) => {
     if (!isConnected) {
@@ -47,6 +48,9 @@ function ChatWindow() {
       {/* Header */}
       <Header />
 
+      {/* Connection Error Banner */}
+      {error && <ErrorBanner message={error} />}
+
       {/* Messages Area */}
       <div className="flex-1 overflow-y-auto px-4 py-4">
         {/* Welcome Message */}
@@ -65,7 +69,7 @@ function ChatWindow() {
       </div>
 
       {/* Input */}
-      <ChatInput onSend={handleSend} />
+      <ChatInput onSend={handleSend} disabled={!isConnected} />
     </div>
   );
 }

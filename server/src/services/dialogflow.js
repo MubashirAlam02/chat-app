@@ -9,12 +9,26 @@ const __dirname = path.dirname(__filename);
 const keyFilePath = path.join(__dirname, "../../service-account.json");
 
 // Create Dialogflow sessions client
-const sessionClient = new dialogflow.SessionsClient({
-  keyFilename: keyFilePath,
-});
+let sessionClient;
+
+try {
+  sessionClient = new dialogflow.SessionsClient({
+    keyFilename: keyFilePath,
+  });
+  console.log("Dialogflow client initialized successfully");
+} catch (error) {
+  console.error("Failed to initialize Dialogflow client:", error);
+  process.exit(1);
+}
 
 export async function detectIntent(sessionId, message) {
   const projectId = process.env.DIALOGFLOW_PROJECT_ID;
+
+  if (!projectId) {
+    throw new Error(
+      "DIALOGFLOW_PROJECT_ID is not set in environment variables",
+    );
+  }
 
   const sessionPath = sessionClient.projectAgentSessionPath(
     projectId,
@@ -32,7 +46,10 @@ export async function detectIntent(sessionId, message) {
   };
 
   const [response] = await sessionClient.detectIntent(request);
-  const result = response.queryResult;
 
-  return result.fulfillmentText;
+  if (!response.queryResult) {
+    throw new Error("No query result returned from Dialogflow");
+  }
+
+  return response.queryResult.fulfillmentText;
 }

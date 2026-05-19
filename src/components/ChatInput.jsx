@@ -2,11 +2,11 @@ import { useState } from "react";
 
 const MAX_CHARACTERS = 1500;
 
-function ChatInput({ onSend }) {
+function ChatInput({ onSend, disabled }) {
   const [input, setInput] = useState("");
 
   const handleSend = () => {
-    if (input.trim() === "") return;
+    if (input.trim() === "" || disabled) return;
     onSend(input);
     setInput("");
   };
@@ -42,11 +42,19 @@ function ChatInput({ onSend }) {
           onChange={handleChange}
           onKeyDown={handleKeyDown}
           placeholder="Type a message..."
-          className="flex-1 px-3 sm:px-4 py-2 rounded-full border border-gray-300 outline-none focus:border-blue-500 text-xs sm:text-sm"
+          className={`flex-1 px-3 sm:px-4 py-2 rounded-full border outline-none text-xs sm:text-sm transition-colors ${
+            disabled
+              ? "border-gray-200 bg-gray-100 text-gray-400 cursor-not-allowed"
+              : "border-gray-300 focus:border-blue-500"
+          }`}
         />
         <button
           onClick={handleSend}
-          className="w-9 h-9 sm:w-10 sm:h-10 bg-blue-500 hover:bg-blue-600 text-white rounded-full flex items-center justify-center shrink-0 transition-colors cursor-pointer"
+          className={`w-9 h-9 sm:w-10 sm:h-10 text-white rounded-full flex items-center justify-center shrink-0 transition-colors ${
+            disabled
+              ? "bg-gray-300 cursor-not-allowed"
+              : "bg-blue-500 hover:bg-blue-600"
+          }`}
         >
           <svg
             xmlns="http://www.w3.org/2000/svg"
