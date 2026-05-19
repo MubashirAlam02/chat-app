@@ -4,6 +4,7 @@ import TypingIndicator from "./TypingIndicator";
 import ChatInput from "./ChatInput";
 import Header from "./Header";
 import WelcomeMessage from "./WelcomeMessage";
+import useWebSocket from "../hooks/useWebSocket";
 
 function ChatWindow() {
   const [messages, setMessages] = useState([]);
@@ -15,24 +16,30 @@ function ChatWindow() {
     bottomRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages, isTyping]);
 
-  const handleSend = (text) => {
-    // Add user message
-    const userMessage = { id: Date.now(), sender: "user", text };
-    setMessages((prev) => [...prev, userMessage]);
+  const handleBotMessage = (message) => {
+    setIsTyping(false);
+    setMessages((prev) => [
+      ...prev,
+      { id: Date.now(), sender: "bot", text: message },
+    ]);
+  };
 
-    // Simulate bot typing
+  const { sendMessage, isConnected } = useWebSocket(handleBotMessage);
+
+  const handleSend = (text) => {
+    if (!isConnected) {
+      console.error("WebSocket is not connected");
+      return;
+    }
+
+    // Add user message
+    setMessages((prev) => [...prev, { id: Date.now(), sender: "user", text }]);
+
+    // Show typing indicator
     setIsTyping(true);
 
-    // Simulate bot response after 1.5 seconds
-    setTimeout(() => {
-      const botMessage = {
-        id: Date.now() + 1,
-        sender: "bot",
-        text: "This is a mock response. Backend coming soon!",
-      };
-      setMessages((prev) => [...prev, botMessage]);
-      setIsTyping(false);
-    }, 1500);
+    // Send message to server
+    sendMessage(text);
   };
 
   return (
