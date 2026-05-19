@@ -1,5 +1,6 @@
 import { WebSocketServer } from "ws";
 import { v4 as uuidv4 } from "uuid";
+import { detectIntent } from "../services/dialogflow.js";
 
 export function initializeWebSocket(server) {
   const wss = new WebSocketServer({ server });
@@ -15,8 +16,8 @@ export function initializeWebSocket(server) {
         const { message } = JSON.parse(data);
         console.log(`Message received: ${message}`);
 
-        // Dummy response
-        const botResponse = `You said: "${message}" — Dialogflow response coming soon!`;
+        // Send message to Dialogflow ES and get response
+        const botResponse = await detectIntent(sessionId, message);
 
         ws.send(JSON.stringify({ message: botResponse }));
       } catch (error) {
