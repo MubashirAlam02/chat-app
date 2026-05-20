@@ -1,3 +1,4 @@
+// A tiny toggle button to expand or collapse long text
 function ReadMoreButton({ expanded, isUser, onClick }) {
   return (
     <button

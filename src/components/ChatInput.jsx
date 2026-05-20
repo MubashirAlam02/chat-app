@@ -1,27 +1,38 @@
 import { useState } from "react";
 
+// Maximum number of characters allowed in a single message
 const MAX_CHARACTERS = 1500;
 
+// The bottom input bar where users type messages
+// It includes a handy character counter that pops up when you're near the limit
 function ChatInput({ onSend, disabled }) {
+  // Holds the current text in the input box
   const [input, setInput] = useState("");
 
   const handleSend = () => {
+    // Prevent sending empty messages or if the component is disabled
     if (input.trim() === "" || disabled) return;
+    // Call the parent component's send function
     onSend(input);
+    // Clear the input box after sending
     setInput("");
   };
 
   const handleKeyDown = (e) => {
+    // Also allow sending with the Enter key
     if (e.key === "Enter") handleSend();
   };
 
   const handleChange = (e) => {
+    // Cap the input at the max character limit
     if (e.target.value.length <= MAX_CHARACTERS) {
       setInput(e.target.value);
     }
   };
 
+  // Calculate remaining characters
   const remaining = MAX_CHARACTERS - input.length;
+  // Show counter when 50 characters or less remaining
   const isNearLimit = remaining <= 50;
 
   return (
@@ -34,8 +45,9 @@ function ChatInput({ onSend, disabled }) {
           {remaining} characters remaining
         </div>
       )}
-
+      {/* Input box and send button */}
       <div className="flex items-center gap-2 p-3 sm:p-4">
+        {/* Input field */}
         <input
           type="text"
           value={input}
@@ -48,6 +60,7 @@ function ChatInput({ onSend, disabled }) {
               : "border-gray-300 focus:border-blue-500"
           }`}
         />
+        {/* Send button */}
         <button
           onClick={handleSend}
           className={`w-9 h-9 sm:w-10 sm:h-10 text-white rounded-full flex items-center justify-center shrink-0 transition-colors ${
@@ -56,6 +69,7 @@ function ChatInput({ onSend, disabled }) {
               : "bg-blue-500 hover:bg-blue-600"
           }`}
         >
+          {/* Send Icon */}
           <svg
             xmlns="http://www.w3.org/2000/svg"
             viewBox="0 0 24 24"

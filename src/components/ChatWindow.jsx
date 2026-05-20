@@ -7,6 +7,8 @@ import WelcomeMessage from "./WelcomeMessage";
 import useWebSocket from "../hooks/useWebSocket";
 import ErrorBanner from "./ErrorBanner";
 
+// Main chat interface
+// Manages the list of messages, auto-scrolls to the bottom, and hooks up the websocket connection
 function ChatWindow() {
   const [messages, setMessages] = useState([]);
   const [isTyping, setIsTyping] = useState(false);
@@ -17,17 +19,23 @@ function ChatWindow() {
     bottomRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages, isTyping]);
 
+  // Handles incoming messages from the bot
   const handleBotMessage = (message) => {
+    // Stop the typing indicator
     setIsTyping(false);
+    // Add the bot's message to the list
     setMessages((prev) => [
       ...prev,
       { id: Date.now(), sender: "bot", text: message },
     ]);
   };
 
+  // Set up websocket connection - handles opening, closing, and errors
   const { sendMessage, isConnected, error } = useWebSocket(handleBotMessage);
 
+  // Handles sending messages to the bot
   const handleSend = (text) => {
+    // Prevent sending if not connected
     if (!isConnected) {
       console.error("WebSocket is not connected");
       return;

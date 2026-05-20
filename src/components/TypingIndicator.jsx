@@ -1,3 +1,4 @@
+// Bouncing dots animation to show the bot is "typing"
 function TypingIndicator() {
   return (
     <div className="flex w-full mb-3 justify-start">

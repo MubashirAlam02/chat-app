@@ -1,3 +1,4 @@
+// Shows the time right under the message text
 function Timestamp({ time, isUser }) {
   return (
     <div
